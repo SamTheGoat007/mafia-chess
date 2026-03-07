@@ -8,40 +8,102 @@
     
     <style>
         :root { --gold: #d4af37; --bg: #0a0a0a; --card: #151515; --red: #8b0000; }
-        body { margin: 0; font-family: 'Times New Roman', serif; background: var(--bg); color: #eee; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
         
-        /* Modal Overlay */
+        body { 
+            margin: 0; 
+            font-family: 'Times New Roman', serif; 
+            background: var(--bg); 
+            color: #eee; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+        }
+        
+        /* Modal Overlay - Responsive */
         #login-overlay { 
             position: fixed; inset: 0; 
             background: radial-gradient(circle, #1a1a1a 0%, #000 100%); 
             display: flex; justify-content: center; align-items: center; 
             z-index: 1000; 
             transition: opacity 0.8s ease;
+            padding: 20px;
         }
-        .modal-box { background: var(--card); padding: 40px; border: 1px solid var(--gold); width: 320px; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,1); }
-        .modal-box h2 { color: var(--gold); letter-spacing: 3px; margin-top: 0; }
         
-        input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: var(--gold); box-sizing: border-box; outline: none; }
-        input:focus { border-color: var(--gold); }
+        .modal-box { 
+            background: var(--card); 
+            padding: 30px; 
+            border: 1px solid var(--gold); 
+            width: 100%;
+            max-width: 350px; 
+            text-align: center; 
+            box-shadow: 0 0 50px rgba(0,0,0,1); 
+        }
         
-        button { background: var(--gold); color: black; border: none; padding: 12px; margin-top: 20px; cursor: pointer; font-weight: bold; width: 100%; text-transform: uppercase; transition: 0.3s; }
-        button:hover { background: #fff; letter-spacing: 1px; }
+        .modal-box h2 { color: var(--gold); letter-spacing: 3px; margin-top: 0; font-size: 1.5rem; }
+        
+        input { 
+            width: 100%; padding: 12px; margin: 10px 0; 
+            background: #000; border: 1px solid #333; 
+            color: var(--gold); box-sizing: border-box; 
+            outline: none; font-size: 1rem;
+        }
+        
+        button { 
+            background: var(--gold); color: black; border: none; 
+            padding: 15px; margin-top: 20px; cursor: pointer; 
+            font-weight: bold; width: 100%; text-transform: uppercase; 
+            transition: 0.3s; font-size: 1rem;
+        }
 
-        /* Main Content */
-        #main-content { display: none; width: 95%; max-width: 900px; margin-top: 50px; text-align: center; padding-bottom: 50px; }
-        .timer-display { font-size: 3rem; color: var(--red); margin: 20px 0; font-family: 'Courier New', monospace; text-shadow: 0 0 10px rgba(139, 0, 0, 0.5); }
+        /* Main Content - Responsive */
+        #main-content { 
+            display: none; 
+            width: 95%; 
+            max-width: 900px; 
+            margin-top: 30px; 
+            text-align: center; 
+            padding-bottom: 50px; 
+        }
+
+        h1 { color: var(--gold); letter-spacing: 5px; font-size: calc(1.8rem + 1vw); }
         
-        /* Schedule Sheet */
-        .sheet-wrapper { background: #111; border: 1px solid #222; margin-top: 30px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #1a1a1a; color: var(--gold); padding: 15px; border-bottom: 2px solid var(--gold); text-transform: uppercase; font-size: 0.8rem; }
-        td { padding: 15px; border-bottom: 1px solid #222; }
+        .timer-display { 
+            font-size: calc(2.5rem + 2vw); 
+            color: var(--red); 
+            margin: 15px 0; 
+            font-family: 'Courier New', monospace; 
+            text-shadow: 0 0 10px rgba(139, 0, 0, 0.5); 
+        }
+        
+        /* Schedule Sheet - Mobile Optimized */
+        .sheet-wrapper { 
+            background: #111; 
+            border: 1px solid #222; 
+            margin-top: 30px; 
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th { background: #1a1a1a; color: var(--gold); padding: 12px 8px; border-bottom: 2px solid var(--gold); text-transform: uppercase; font-size: 0.75rem; }
+        td { padding: 12px 8px; border-bottom: 1px solid #222; }
+        
         .rest-day { color: #555; font-style: italic; }
         .game-time { color: var(--gold); font-weight: bold; }
 
-        footer { margin-top: auto; padding: 40px; border-top: 1px solid #333; width: 100%; background: #000; text-align: center; }
-        footer a { color: var(--gold); text-decoration: none; font-size: 1.2rem; transition: 0.3s; }
-        footer a:hover { color: #fff; }
+        /* Media Query for Small Phones */
+        @media (max-width: 480px) {
+            th:nth-child(5), td:nth-child(5) { display: none; } /* إخفاء عمود Format لتوفير مساحة */
+            table { font-size: 0.8rem; }
+            .timer-display { font-size: 3rem; }
+            #main-content { margin-top: 20px; }
+        }
+
+        footer { margin-top: auto; padding: 30px; border-top: 1px solid #333; width: 100%; background: #000; text-align: center; box-sizing: border-box; }
+        footer a { color: var(--gold); text-decoration: none; font-size: 1rem; transition: 0.3s; }
     </style>
 </head>
 <body>
@@ -57,9 +119,9 @@
     </div>
 
     <div id="main-content">
-        <h1 style="color: var(--gold); letter-spacing: 5px; font-size: 2.5rem;">THE MAFIA CHESS</h1>
+        <h1>THE MAFIA CHESS</h1>
         
-        <div style="font-size: 0.7rem; color: #888; letter-spacing: 3px;">NEXT CONTRACT STARTS IN:</div>
+        <div style="font-size: 0.6rem; color: #888; letter-spacing: 2px;">NEXT CONTRACT STARTS IN:</div>
         <div class="timer-display" id="timer">00:00:00</div>
 
         <div class="sheet-wrapper">
@@ -68,25 +130,25 @@
                     <tr>
                         <th>Day</th>
                         <th>Event</th>
-                        <th>Start Time</th>
-                        <th>Game Time</th>
+                        <th>Time</th>
+                        <th>Game</th>
                         <th>Format</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr><td>Monday</td><td>⚡ Blitz</td><td>10:00 PM</td><td class="game-time">3+2</td><td>7 Rounds</td></tr>
                     <tr><td>Tuesday</td><td>⚡ Blitz</td><td>10:00 PM</td><td class="game-time">3+2</td><td>7 Rounds</td></tr>
-                    <tr class="rest-day"><td>Wednesday</td><td>🛌 REST DAY</td><td>——</td><td>——</td><td>——</td></tr>
+                    <tr class="rest-day"><td>Wednesday</td><td>🛌 REST</td><td>——</td><td>——</td><td>——</td></tr>
                     <tr><td>Thursday</td><td>⏱️ Rapid</td><td>09:30 PM</td><td class="game-time">10+5</td><td>5 Rounds</td></tr>
                     <tr><td>Friday</td><td>⏱️ Rapid</td><td>09:30 PM</td><td class="game-time">10+5</td><td>5 Rounds</td></tr>
                     <tr><td>Saturday</td><td>⚡ Blitz</td><td>11:00 PM</td><td class="game-time">3+2</td><td>7 Rounds</td></tr>
-                    <tr class="rest-day"><td>Sunday</td><td>🛌 REST DAY</td><td>——</td><td>——</td><td>——</td></tr>
+                    <tr class="rest-day"><td>Sunday</td><td>🛌 REST</td><td>——</td><td>——</td><td>——</td></tr>
                 </tbody>
             </table>
         </div>
 
         <footer>
-            <p style="margin-bottom: 10px;">The Chess Mafia||</p>
+            <p style="margin-bottom: 10px; font-size: 0.8rem;">The Chess Mafia ||</p>
             <a href="https://t.me/ChEEsMafia" target="_blank">t.me/ChEEsMafia</a>
         </footer>
     </div>
@@ -111,7 +173,6 @@
                 });
                 
                 if (response.ok) {
-                    // Success fade out
                     overlay.style.opacity = '0';
                     setTimeout(() => {
                         overlay.style.display = 'none';
@@ -119,7 +180,7 @@
                         startTimer();
                     }, 800);
                 } else {
-                    alert("The Family does not recognize this submission. Try again.");
+                    alert("The Family does not recognize this submission.");
                     btn.innerText = "ENTER THE DEN";
                     btn.disabled = false;
                 }
@@ -134,20 +195,16 @@
             setInterval(() => {
                 const now = new Date();
                 const target = new Date();
-                
-                // Target next 10:00 PM (22:00) for countdown logic
                 target.setHours(22, 0, 0, 0);
-                
-                if (now > target) {
-                    target.setDate(now.getDate() + 1);
-                }
+                if (now > target) target.setDate(now.getDate() + 1);
                 
                 const diff = target - now;
                 const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
                 const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
                 const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
                 
-                document.getElementById('timer').innerText = `${h}:${m}:${s}`;
+                const timerEl = document.getElementById('timer');
+                if(timerEl) timerEl.innerText = `${h}:${m}:${s}`;
             }, 1000);
         }
     </script>
