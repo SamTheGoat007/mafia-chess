@@ -11,7 +11,13 @@
         body { margin: 0; font-family: 'Times New Roman', serif; background: var(--bg); color: #eee; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
         
         /* Modal Overlay */
-        #login-overlay { position: fixed; inset: 0; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        #login-overlay { 
+            position: fixed; inset: 0; 
+            background: radial-gradient(circle, #1a1a1a 0%, #000 100%); 
+            display: flex; justify-content: center; align-items: center; 
+            z-index: 1000; 
+            transition: opacity 0.8s ease;
+        }
         .modal-box { background: var(--card); padding: 40px; border: 1px solid var(--gold); width: 320px; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,1); }
         .modal-box h2 { color: var(--gold); letter-spacing: 3px; margin-top: 0; }
         
@@ -68,12 +74,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>Monday</td><td>⚡ Blitz</td><td>10:00 AM</td><td class="game-time">3+2</td><td>7 Rounds</td></tr>
-                    <tr><td>Tuesday</td><td>⚡ Blitz</td><td>10:00 AM</td><td class="game-time">3+2</td><td>7 Rounds</td></tr>
+                    <tr><td>Monday</td><td>⚡ Blitz</td><td>10:00 PM</td><td class="game-time">3+2</td><td>7 Rounds</td></tr>
+                    <tr><td>Tuesday</td><td>⚡ Blitz</td><td>10:00 PM</td><td class="game-time">3+2</td><td>7 Rounds</td></tr>
                     <tr class="rest-day"><td>Wednesday</td><td>🛌 REST DAY</td><td>——</td><td>——</td><td>——</td></tr>
-                    <tr><td>Thursday</td><td>⏱️ Rapid</td><td>09:30 AM</td><td class="game-time">10+5</td><td>5 Rounds</td></tr>
-                    <tr><td>Friday</td><td>⏱️ Rapid</td><td>09:30 AM</td><td class="game-time">10+5</td><td>5 Rounds</td></tr>
-                    <tr><td>Saturday</td><td>⚡ Blitz</td><td>11:00 AM</td><td class="game-time">3+2</td><td>7 Rounds</td></tr>
+                    <tr><td>Thursday</td><td>⏱️ Rapid</td><td>09:30 PM</td><td class="game-time">10+5</td><td>5 Rounds</td></tr>
+                    <tr><td>Friday</td><td>⏱️ Rapid</td><td>09:30 PM</td><td class="game-time">10+5</td><td>5 Rounds</td></tr>
+                    <tr><td>Saturday</td><td>⚡ Blitz</td><td>11:00 PM</td><td class="game-time">3+2</td><td>7 Rounds</td></tr>
                     <tr class="rest-day"><td>Sunday</td><td>🛌 REST DAY</td><td>——</td><td>——</td><td>——</td></tr>
                 </tbody>
             </table>
@@ -91,6 +97,8 @@
         form.onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
+            const overlay = document.getElementById('login-overlay');
+            
             btn.innerText = "AUTHENTICATING...";
             btn.disabled = true;
 
@@ -103,11 +111,13 @@
                 });
                 
                 if (response.ok) {
-                    // Success: Hide the questions and show the site
-                    document.getElementById('login-overlay').style.fadeOut = "slow";
-                    document.getElementById('login-overlay').style.display = 'none';
-                    document.getElementById('main-content').style.display = 'block';
-                    startTimer();
+                    // Success fade out
+                    overlay.style.opacity = '0';
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                        document.getElementById('main-content').style.display = 'block';
+                        startTimer();
+                    }, 800);
                 } else {
                     alert("The Family does not recognize this submission. Try again.");
                     btn.innerText = "ENTER THE DEN";
@@ -124,9 +134,13 @@
             setInterval(() => {
                 const now = new Date();
                 const target = new Date();
-                // Target next 10:00 AM for countdown logic
-                target.setHours(10, 0, 0, 0);
-                if (now > target) target.setDate(now.getDate() + 1);
+                
+                // Target next 10:00 PM (22:00) for countdown logic
+                target.setHours(22, 0, 0, 0);
+                
+                if (now > target) {
+                    target.setDate(now.getDate() + 1);
+                }
                 
                 const diff = target - now;
                 const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
