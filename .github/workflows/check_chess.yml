@@ -1,25 +1,26 @@
-name: Check Mafia Chess
+name: Mafia Hourly Update
+
 on:
   schedule:
-    - cron: '*/30 * * * *'  # This runs every hour, on the dot
-  workflow_dispatch:      # This lets you run it manually to test
+    - cron: '0 * * * *'  # Runs exactly every hour
+  workflow_dispatch:      # Allows you to test it manually by clicking a button
 
 jobs:
-  build:
+  run-bot:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.9'
 
-      - name: Install dependencies
-        run: pip install requests beautifulsoup4 pyTelegramBotAPI
+      - name: Install Dependencies
+        run: pip install pyTelegramBotAPI beautifulsoup4 requests
 
-      - name: Run bot script
+      - name: Execute Bot
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
