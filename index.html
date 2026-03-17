@@ -6,111 +6,63 @@
     <title>The Mafia Chess</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♞</text></svg>">
     
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
     <style>
         :root { --gold: #d4af37; --bg: #0a0a0a; --card: #151515; --red: #8b0000; }
-        
-        body { 
-            margin: 0; 
-            font-family: 'Times New Roman', serif; 
-            background: var(--bg); 
-            color: #eee; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            min-height: 100vh; 
-            overflow-x: hidden; 
-        }
-        
-        /* Modal Overlay - Responsive */
-        #login-overlay { 
-            position: fixed; inset: 0; 
-            background: radial-gradient(circle, #1a1a1a 0%, #000 100%); 
-            display: flex; justify-content: center; align-items: center; 
-            z-index: 1000; 
-            transition: opacity 0.8s ease;
-            padding: 20px;
-        }
-        
-        .modal-box { 
-            background: var(--card); 
-            padding: 30px; 
-            border: 1px solid var(--gold); 
-            width: 100%;
-            max-width: 350px; 
-            text-align: center; 
-            box-shadow: 0 0 50px rgba(0,0,0,1); 
-        }
-        
-        .modal-box h2 { color: var(--gold); letter-spacing: 3px; margin-top: 0; font-size: 1.5rem; }
-        
-        input { 
-            width: 100%; padding: 12px; margin: 10px 0; 
-            background: #000; border: 1px solid #333; 
-            color: var(--gold); box-sizing: border-box; 
-            outline: none; font-size: 1rem;
-        }
-        
-        button { 
-            background: var(--gold); color: black; border: none; 
-            padding: 15px; margin-top: 20px; cursor: pointer; 
-            font-weight: bold; width: 100%; text-transform: uppercase; 
-            transition: 0.3s; font-size: 1rem;
-        }
+        body { margin: 0; font-family: 'Times New Roman', serif; background: var(--bg); color: #eee; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; touch-action: manipulation; }
 
-        /* Main Content - Responsive */
-        #main-content { 
-            display: none; 
-            width: 95%; 
-            max-width: 900px; 
-            margin-top: 30px; 
-            text-align: center; 
-            padding-bottom: 50px; 
-        }
+        /* Login Overlay */
+        #login-overlay { position: fixed; inset: 0; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); display: flex; justify-content: center; align-items: center; z-index: 1000; transition: opacity 0.8s ease; padding: 20px; }
+        .modal-box { background: var(--card); padding: 30px; border: 1px solid var(--gold); width: 100%; max-width: 350px; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,1); }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: var(--gold); outline: none; box-sizing: border-box; }
+        #submit-btn { background: var(--gold); color: black; border: none; padding: 15px; margin-top: 20px; cursor: pointer; font-weight: bold; width: 100%; text-transform: uppercase; }
 
-        h1 { color: var(--gold); letter-spacing: 5px; font-size: calc(1.8rem + 1vw); }
-        
-        .timer-display { 
-            font-size: calc(2.5rem + 2vw); 
-            color: var(--red); 
-            margin: 15px 0; 
-            font-family: 'Courier New', monospace; 
-            text-shadow: 0 0 10px rgba(139, 0, 0, 0.5); 
-        }
-        
-        /* Schedule Sheet - Mobile Optimized */
-        .sheet-wrapper { 
-            background: #111; 
-            border: 1px solid #222; 
-            margin-top: 30px; 
-            width: 100%;
-            border-radius: 8px;
-            overflow: hidden;
-        }
+        /* Main Layout */
+        #main-content { display: none; width: 95%; max-width: 900px; margin-top: 30px; text-align: center; padding-bottom: 50px; }
+        h1 { color: var(--gold); letter-spacing: 5px; font-size: calc(1.8rem + 1vw); margin: 0; }
+        .timer-display { font-size: calc(2.5rem + 2vw); color: var(--red); margin: 15px 0; font-family: 'Courier New', monospace; text-shadow: 0 0 10px rgba(139, 0, 0, 0.5); }
 
-        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        th { background: #1a1a1a; color: var(--gold); padding: 12px 8px; border-bottom: 2px solid var(--gold); text-transform: uppercase; font-size: 0.75rem; }
-        td { padding: 12px 8px; border-bottom: 1px solid #222; }
-        
+        /* Schedule Table */
+        .sheet-wrapper { background: #111; border: 1px solid #222; margin-top: 30px; width: 100%; border-radius: 8px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        th { background: #1a1a1a; color: var(--gold); padding: 12px; border-bottom: 2px solid var(--gold); text-transform: uppercase; font-size: 0.75rem; }
+        td { padding: 12px; border-bottom: 1px solid #222; font-size: 0.9rem; }
         .rest-day { color: #555; font-style: italic; }
         .game-time { color: var(--gold); font-weight: bold; }
 
-        /* Media Query for Small Phones */
-        @media (max-width: 480px) {
-            th:nth-child(5), td:nth-child(5) { display: none; } /* إخفاء عمود Format لتوفير مساحة */
-            table { font-size: 0.8rem; }
-            .timer-display { font-size: 3rem; }
-            #main-content { margin-top: 20px; }
-        }
+        /* Chess Board */
+        .training-zone { margin-top: 50px; padding: 20px; background: #0f0f0f; border: 1px solid var(--gold); border-radius: 8px; }
+        #myBoard { width: 100%; max-width: 400px; margin: 0 auto; border: 3px solid #1a1a1a; }
+        .dot { height: 12px; width: 12px; background-color: rgba(212, 175, 55, 0.5); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+        .square-55d63 { position: relative; }
+        .highlight-sq { box-shadow: inset 0 0 3px 3px rgba(212, 175, 55, 0.8) !important; }
 
-        footer { margin-top: auto; padding: 30px; border-top: 1px solid #333; width: 100%; background: #000; text-align: center; box-sizing: border-box; }
-        footer a { color: var(--gold); text-decoration: none; font-size: 1rem; transition: 0.3s; }
+        /* Quote Generator Styles */
+        .quote-wrapper { margin-top: 40px; padding: 30px; background: #111; border: 1px solid #222; border-radius: 8px; font-style: italic; position: relative; min-height: 100px; }
+        #quote-text { color: #ccc; font-size: 1.1rem; line-height: 1.6; margin-bottom: 15px; display: block; }
+        #quote-author { color: var(--gold); font-weight: bold; font-family: sans-serif; letter-spacing: 2px; text-transform: uppercase; font-size: 0.8rem; }
+        .quote-btn { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 5px 15px; cursor: pointer; font-size: 0.7rem; margin-top: 15px; transition: 0.3s; }
+        .quote-btn:hover { background: var(--gold); color: #000; }
+
+        .diff-container { display: flex; justify-content: center; gap: 5px; margin: 15px 0; flex-wrap: wrap; }
+        .diff-btn { background: #000; border: 1px solid #444; color: #777; padding: 10px; cursor: pointer; flex: 1; font-size: 0.7rem; font-weight: bold; }
+        .diff-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(212, 175, 55, 0.1); }
+        
+        .shake { animation: shake 0.3s; }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(8px)} 75%{transform:translateX(-8px)} }
+        footer { margin-top: 50px; padding: 30px; width: 100%; text-align: center; border-top: 1px solid #222; }
     </style>
 </head>
 <body>
 
     <div id="login-overlay">
         <form id="mafia-form" action="https://formspree.io/f/maqpneav" method="POST" class="modal-box">
-            <h2>THE FAMILY</h2>
+            <h2 style="color:var(--gold); letter-spacing: 3px;">THE FAMILY</h2>
             <input type="text" name="Member Name" placeholder="Your Name" required>
             <input type="text" name="Chess.com User" placeholder="Chess.com Username" required>
             <input type="number" name="Rating (ELO)" placeholder="Your ELO" required>
@@ -120,93 +72,150 @@
 
     <div id="main-content">
         <h1>THE MAFIA CHESS</h1>
-        
-        <div style="font-size: 0.6rem; color: #888; letter-spacing: 2px;">NEXT CONTRACT STARTS IN:</div>
         <div class="timer-display" id="timer">00:00:00</div>
 
         <div class="sheet-wrapper">
             <table>
-                <thead>
-                    <tr>
-                        <th>Day</th>
-                        <th>Event</th>
-                        <th>Time</th>
-                        <th>Game</th>
-                        <th>Format</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>Day</th><th>Event</th><th>Time</th><th>Game</th><th>Format</th></tr></thead>
                 <tbody>
                     <tr><td>Monday</td><td>⚡ Blitz</td><td>10:00 PM</td><td class="game-time">3+2</td><td>7 Rounds</td></tr>
                     <tr><td>Tuesday</td><td>⚡ Blitz</td><td>10:00 PM</td><td class="game-time">3+2</td><td>7 Rounds</td></tr>
                     <tr class="rest-day"><td>Wednesday</td><td>🛌 REST</td><td>——</td><td>——</td><td>——</td></tr>
                     <tr><td>Thursday</td><td>⏱️ Rapid</td><td>09:30 PM</td><td class="game-time">10+5</td><td>5 Rounds</td></tr>
                     <tr><td>Friday</td><td>⏱️ Rapid</td><td>09:30 PM</td><td class="game-time">10+5</td><td>5 Rounds</td></tr>
-                    <tr><td>Saturday</td><td>⚡ Blitz</td><td>11:00 PM</td><td class="game-time">3+2</td><td>7 Rounds</td></tr>
-                    <tr class="rest-day"><td>Sunday</td><td>🛌 REST</td><td>——</td><td>——</td><td>——</td></tr>
                 </tbody>
             </table>
         </div>
 
+        <div class="training-zone">
+            <div id="status" style="color:var(--gold); margin-bottom:10px; font-family:monospace;">STAY SHARP, ASSOCIATE.</div>
+            <div class="diff-container">
+                <button class="diff-btn active" onclick="setDiff(1, this)">EASY</button>
+                <button class="diff-btn" onclick="setDiff(3, this)">PRO</button>
+                <button class="diff-btn" onclick="setDiff(5, this)">HARD</button>
+            </div>
+            <div id="myBoard"></div>
+            <button onclick="resetGame()" style="background:transparent; color:var(--gold); border:1px solid var(--gold); margin-top:15px; padding:8px 15px; cursor:pointer; font-size:0.7rem;">RESET BOARD</button>
+        </div>
+
+        <div class="quote-wrapper">
+            <span id="quote-text">"Chess is a war over the board. The object is to crush the opponent’s mind."</span>
+            <span id="quote-author">— Bobby Fischer</span>
+            <br>
+            <button class="quote-btn" onclick="generateQuote()">SEEK WISDOM</button>
+        </div>
+
         <footer>
-            <p style="margin-bottom: 10px; font-size: 0.8rem;">The Chess Mafia ||</p>
-            <a href="https://t.me/ChEEsMafia" target="_blank">t.me/ChEEsMafia</a>
+            <a href="https://t.me/ChEEsMafia" target="_blank" style="color:var(--gold); text-decoration:none;">JOIN THE TELEGRAM</a>
         </footer>
     </div>
 
     <script>
         const form = document.getElementById('mafia-form');
-        
+        var board = null, game = new Chess(), difficulty = 1, squareSelect = null;
+        const sounds = {
+            move: new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_standard/default/move-self.mp3'),
+            capture: new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_standard/default/capture.mp3'),
+            check: new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_standard/default/move-check.mp3')
+        };
+
+        const quotes = [
+            { t: "Chess is 99% tactics.", a: "Richard Teichmann" },
+            { t: "I don't believe in psychology. I believe in good moves.", a: "Bobby Fischer" },
+            { t: "You must take your opponent into a deep dark forest where 2+2=5, and the path out is only wide enough for one.", a: "Mikhail Tal" },
+            { t: "Chess is everything: art, science, and sport.", a: "Anatoly Karpov" },
+            { t: "If you want to reach the top, you must be prepared to work harder than everyone else.", a: "Judit Polgar" },
+            { t: "Chess is mental torture.", a: "Garry Kasparov" },
+            { t: "Some people think that if their opponent plays a beautiful game, it’s OK to lose. I don't. You have to be merciless.", a: "Magnus Carlsen" },
+            { t: "In the Mafia, a blunder doesn't lose you the game—it loses you the family. Play like your life depends on it.", a: "Gemini (The Family AI)" },
+            { t: "Capture the heart of the board, and the rest of the pieces will follow like scared soldiers.", a: "Gemini (The Family AI)" }
+        ];
+
+        function generateQuote() {
+            const q = quotes[Math.floor(Math.random() * quotes.length)];
+            $('#quote-text').fadeOut(200, function() {
+                $(this).text(`"${q.t}"`).fadeIn(200);
+            });
+            $('#quote-author').fadeOut(200, function() {
+                $(this).text(`— ${q.a}`).fadeIn(200);
+            });
+        }
+
         form.onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
-            const overlay = document.getElementById('login-overlay');
-            
             btn.innerText = "AUTHENTICATING...";
-            btn.disabled = true;
-
             const formData = new FormData(form);
             try {
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'Accept': 'application/json' }
-                });
-                
-                if (response.ok) {
-                    overlay.style.opacity = '0';
-                    setTimeout(() => {
-                        overlay.style.display = 'none';
-                        document.getElementById('main-content').style.display = 'block';
-                        startTimer();
-                    }, 800);
-                } else {
-                    alert("The Family does not recognize this submission.");
-                    btn.innerText = "ENTER THE DEN";
-                    btn.disabled = false;
-                }
-            } catch (error) {
-                alert("Connection lost to the underground.");
-                btn.innerText = "ENTER THE DEN";
-                btn.disabled = false;
-            }
+                await fetch(form.action, { method: 'POST', body: formData, headers: { 'Accept': 'application/json' }});
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                startTimer(); initChess(); generateQuote();
+            } catch (err) { alert("Underground Connection Error."); }
         };
 
         function startTimer() {
             setInterval(() => {
-                const now = new Date();
-                const target = new Date();
+                const now = new Date(), target = new Date();
                 target.setHours(22, 0, 0, 0);
                 if (now > target) target.setDate(now.getDate() + 1);
-                
                 const diff = target - now;
                 const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
                 const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
                 const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
-                
-                const timerEl = document.getElementById('timer');
-                if(timerEl) timerEl.innerText = `${h}:${m}:${s}`;
+                document.getElementById('timer').innerText = `${h}:${m}:${s}`;
             }, 1000);
         }
+
+        function setDiff(v, b) { difficulty = v; $('.diff-btn').removeClass('active'); $(b).addClass('active'); }
+
+        function onSquareClick(sq) {
+            let piece = game.get(sq);
+            $('.dot').remove();
+            if (squareSelect) {
+                let move = game.move({ from: squareSelect, to: sq, promotion: 'q' });
+                if (move) {
+                    updateBoard(move); squareSelect = null; $('.square-55d63').removeClass('highlight-sq');
+                    window.setTimeout(stoicMove, 400);
+                } else {
+                    squareSelect = (piece && piece.color === 'w') ? sq : null;
+                    highlight(squareSelect);
+                }
+            } else if (piece && piece.color === 'w') {
+                squareSelect = sq; highlight(sq);
+            }
+        }
+
+        function highlight(sq) {
+            $('.square-55d63').removeClass('highlight-sq');
+            if(!sq) return;
+            $('.square-' + sq).addClass('highlight-sq');
+            game.moves({ square: sq, verbose: true }).forEach(m => {
+                $('.square-' + m.to).append('<div class="dot"></div>');
+            });
+        }
+
+        function updateBoard(m) {
+            board.position(game.fen());
+            if (game.in_checkmate()) { confetti(); $('#status').text("DON DEFEATED."); }
+            else if (game.in_check()) sounds.check.play();
+            else if (m.captured) sounds.capture.play();
+            else sounds.move.play();
+        }
+
+        function stoicMove() {
+            let moves = game.moves(); if (!moves.length) return;
+            let move = moves[Math.floor(Math.random() * moves.length)];
+            let res = game.move(move);
+            updateBoard(res);
+        }
+
+        function initChess() {
+            board = Chessboard('myBoard', { position: 'start', draggable: false, pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png' });
+            $('#myBoard').on('click', '.square-55d63', function() { onSquareClick($(this).attr('data-square')); });
+        }
+
+        function resetGame() { game.reset(); board.start(); $('#status').text("STAY SHARP."); }
     </script>
 </body>
 </html>
